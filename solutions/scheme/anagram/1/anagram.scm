@@ -1,0 +1,13 @@
+(import (rnrs))
+
+(define (anagram target words)
+  (define (sort-ascending word)
+    (sort word char<?))
+  (let* ((uppercase-target (string-upcase target))
+         (sorted-target (sort-ascending uppercase-target)))
+    (define (anagram? word)
+      (let* ((uppercase-word (string-upcase word))
+              (sorted-word (sort-ascending uppercase-word)))
+            (and (not (string=? uppercase-target uppercase-word))
+                 (string=? sorted-target sorted-word))))
+  (filter anagram? words)))
