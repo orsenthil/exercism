@@ -1,25 +1,17 @@
 #include "grains.h"
-#include <stdio.h>
 
 uint64_t square(uint8_t index) {
-    if (index == 0) {
+    if (index == 0 || index > 64) {
         return 0;
     }
-    uint64_t total = 1;
-    for (int i = 2; i <= index; i++) {
-        total = total * 2;
-    }
-    return total;
+    return 1ULL << (index - 1);
 }
 
-uint64_t total(void) {
-    uint64_t total = 1;
-    uint64_t cumm = 1;
-
-    for (int i = 2; i <= 64; i++) {
-        total = total * 2;
-        cumm += total;
+uint64_t total(void) 
+{
+    uint64_t total = 0;
+    for (uint8_t i = 1; i <= 64; i++) {
+        total += square(i);
     }
-
-    return cumm;
+    return total;
 }
