@@ -1,12 +1,21 @@
+#include <stdlib.h>
 #include "queen_attack.h"
 
 attack_status_t can_attack(position_t queen_1, position_t queen_2) {
-    position_t queen1 = queen_1;
-    position_t queen2 = queen_2;
-
-    if (queen1.row >= 8 || queen2.row >= 8 || queen1.column >= 8 || queen2.column >= 8 || (queen1.row == queen2.row && queen1.column == queen2.column))
+    if (queen_1.row == queen_2.row && queen_1.column == queen_2.column) {
         return INVALID_POSITION;
-
-    int result = (queen1.row == queen2.row || queen1.column == queen2.column || queen1.column - queen2.column == queen1.row - queen2.row || queen1.column - queen2.column == -(queen1.row - queen2.row));
-    return result;
+    }
+    if (queen_1.row > 7 || queen_1.column > 7) {
+        return INVALID_POSITION;
+    }
+    if (queen_2.row > 7 || queen_2.column > 7) {
+        return INVALID_POSITION;
+    }
+    if (queen_1.row == queen_2.row || queen_1.column == queen_2.column) {
+        return CAN_ATTACK;
+    }
+    if (abs(queen_1.row - queen_2.row) == abs(queen_1.column - queen_2.column)) {
+        return CAN_ATTACK;
+    }
+    return CAN_NOT_ATTACK;
 }
