@@ -1,18 +1,18 @@
 #include "hamming.h"
-#include <string.h>
 
+#include <string.h>
 
 int compute(const char *lhs, const char *rhs) {
     if (strlen(lhs) != strlen(rhs)) {
         return -1;
     }
-    int count = 0;
-
-    for (size_t i = 0; i < strlen(lhs); i++) {
+    int distance = 0;
+    int i = 0;
+    while (lhs[i] != '\0') {
         if (lhs[i] != rhs[i]) {
-            count += 1;
+            distance++;
         }
+        i++;
     }
-    return count;
+    return distance;
 }
-
