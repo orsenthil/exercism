@@ -3,6 +3,4 @@
 
 char *to_rna(const char *dna);
 
-char convert_nucleotide(char);
-
 #endif
