@@ -1,23 +1,28 @@
 #include "triangle.h"
 
-
-bool is_equilateral(triangle_t sides) {
-    if ((sides.a == sides.b) && (sides.b == sides.c)) {
-        return true;
-    }
-    return false;
+bool is_valid_triangle(triangle_t t) {
+  return t.a > 0 && t.b > 0 && t.c > 0 && (t.a + t.b > t.c) &&
+         (t.a + t.c > t.b) && (t.b + t.c > t.a);
 }
-
-bool is_isosceles(triangle_t sides) {
-    if ((sides.a == sides.b) || (sides.a == sides.c) || (sides.b == sides.c)){
-        return true;
-    }
+bool is_equilateral(triangle_t t) {
+  if (!is_valid_triangle(t)) {
     return false;
+  }
+  return t.a == t.b && t.b == t.c;
 }
-
-bool is_scalene(triangle_t sides) {
-    if ((sides.a != sides.b) && (sides.b != sides.c)) {
-        return true;
-    }
+bool is_isosceles(triangle_t t) {
+  if (!is_valid_triangle(t)) {
     return false;
+  }
+  if (is_equilateral(t)) {
+    return true;
+  }
+  return (t.a == t.b && t.a != t.c) || (t.a == t.c && t.a != t.b) ||
+         (t.b == t.c && t.b != t.a);
+}
+bool is_scalene(triangle_t t) {
+  if (!is_valid_triangle(t)) {
+    return false;
+  }
+  return t.a != t.b && t.b != t.c && t.a != t.c;
 }
