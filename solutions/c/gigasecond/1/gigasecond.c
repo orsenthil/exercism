@@ -1,11 +1,8 @@
 #include "gigasecond.h"
-#include <stdint.h>
-#include <math.h>
 
-time_t gigasecond_after(time_t t)
-{
-    time_t result;
-    uint64_t giga = pow(10, 9) + t;
-    result = giga % 60;
-    return result;
+void gigasecond(time_t input, char *output, size_t size) {
+  time_t result =
+      input + 1000000000L; // Add one gigasecond (1,000,000,000 seconds)
+  struct tm *t = gmtime(&result);
+  strftime(output, size, "%Y-%m-%d %H:%M:%S", t);
 }
