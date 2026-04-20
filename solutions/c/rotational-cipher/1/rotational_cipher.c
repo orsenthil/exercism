@@ -1,18 +1,20 @@
 #include "rotational_cipher.h"
-
-#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <stdlib.h>
 
 char *rotate(const char *text, int shift_key) {
     char *result = malloc(strlen(text) + 1);
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha(text[i])) {
-            char base = isupper(text[i]) ? 'A' : 'a';
-            result[i] = base + (text[i] - base + shift_key) % 26;
+    size_t len = strlen(text);
+    for (size_t i = 0; i < len; i++) {
+        char c = text[i];
+        if (c >= 'a' && c <= 'z') {
+            result[i] = (c - 'a' + shift_key) % 26 + 'a';
+        } else if (c >= 'A' && c <= 'Z') {
+            result[i] = (c - 'A' + shift_key) % 26 + 'A';
         } else {
-            result[i] = text[i];
+            result[i] = c;
         }
     }
+    result[len] = '\0';
     return result;
 }
