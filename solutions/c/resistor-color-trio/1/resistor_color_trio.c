@@ -1,18 +1,24 @@
 #include "resistor_color_trio.h"
-#include <stdint.h>
+#include <math.h>
 
-resistor_value_t color_code(const resistor_band_t* colors)
-{
-    resistor_value_t resistor_value;
+resistor_value_t color_code(resistor_band_t bands[]) {
+  long value = 0;
+  value = (bands[0] * 10 + bands[1]) * (long)pow(10, bands[2]);
 
-    uint16_t result;
-    result = colors[2] * 100 + colors[1] * 10 + colors[0];
+  if (value >= 1000000000) {
+    value /= 1000000000;
+    return (resistor_value_t){.value = value, .unit = GIGAOHMS};
+  }
 
-    if (result >= 1000) {
-        result /= 1000;
-        resistor_value.unit = KILOOHMS;
-    }
-    resistor_value.value = result;
+  if (value >= 1000000) {
+    value /= 1000000;
+    return (resistor_value_t){.value = value, .unit = MEGAOHMS};
+  }
 
-    return resistor_value;
+  if (value >= 1000) {
+    value /= 1000;
+    return (resistor_value_t){.value = value, .unit = KILOOHMS};
+  }
+
+  return (resistor_value_t){.value = value, .unit = OHMS};
 }
