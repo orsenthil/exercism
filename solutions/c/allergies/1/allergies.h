@@ -20,6 +20,7 @@ typedef struct {
    bool allergens[ALLERGEN_COUNT];
 } allergen_list_t;
 
-bool is_allergic_to(allergen_t allergen, int quantity);
+bool is_allergic_to(allergen_t allergen, int score);
+allergen_list_t get_allergens(int score);
 
 #endif
