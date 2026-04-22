@@ -1,42 +1,59 @@
 #include "yacht.h"
 
-#define DIE_FACES 6
-#define NUM_DICE 5
-
 int score(dice_t dice, category_t category) {
-    int faces[DIE_FACES] = {0};
-    int score = 0;
-    int non_zero = 0;
+    int counts[7] = {0};
+    int two_of_kind = 0, three_of_kind = 0;
 
-    for (int i = 0; i < NUM_DICE; i++) {
-        if (faces[dice.faces[i] - 1] == 0) non_zero++;
-        faces[dice.faces[i] - 1]++;
-        score += dice.faces[i];
+    for (int i = 0; i < 5; i++) {
+        counts[dice.faces[i]]++;
     }
-
-    if (ONES <= category && category <= SIXES) {
-        return faces[category] * (category + 1);
-    } else if (category == YACHT && non_zero == 1) {
-        return 50;
-    } else if (category == FULL_HOUSE) {
-        for (int i = 0; i < NUM_DICE; i++) {
-            if (non_zero != 2 || (faces[dice.faces[i] - 1] != 2 && faces[dice.faces[i] - 1] != 3)) {
-                return 0;
+    switch (category) {
+        case ONES: return counts[1] * 1;
+        case TWOS: return counts[2] * 2;
+        case THREES: return counts[3] * 3;
+        case FOURS: return counts[4] * 4;
+        case FIVES: return counts[5] * 5;
+        case SIXES: return counts[6] * 6;
+        case FULL_HOUSE:
+            for (int i = 1; i <= 6; i++) {
+                if (counts[i] == 2) {
+                    two_of_kind = i * 2;
+                } else if (counts[i] == 3) {
+                    three_of_kind = i * 3;
+                }
             }
-            return score;
-        }
-    } else if (category == FOUR_OF_A_KIND) {
-        for (int i = 0; i < NUM_DICE; i++) {
-            if (faces[dice.faces[i] - 1] == 4 || faces[dice.faces[i] - 1] == 5) {
-                return dice.faces[i] * 4;
+            if (two_of_kind > 0 && three_of_kind > 0) {
+                return two_of_kind + three_of_kind;
             }
-        }
-    } else if (non_zero == 5 &&
-        ((category == LITTLE_STRAIGHT && faces[DIE_FACES -1] == 0) ||
-         (category == BIG_STRAIGHT && faces[0] == 0))) {
-            return 30;
-    } else if (category == CHOICE) {
-        return score;
+            return 0;
+        case FOUR_OF_A_KIND:
+            for (int i = 1; i <= 6; i++) {
+                if (counts[i] >= 4) {
+                    return i * 4;
+                }
+            }
+            return 0;
+        case LITTLE_STRAIGHT:
+            if (counts[1] == 1 && counts[2] == 1 && counts[3] == 1 && counts[4] == 1 && counts[5] == 1 && counts[6] == 0) {
+                return 30;
+            }
+            return 0;
+        case BIG_STRAIGHT:
+            if (counts[1] == 0 && counts[2] == 1 && counts[3] == 1 && counts[4] == 1 && counts[5] == 1 && counts[6] == 1) {
+                return 30;
+            }
+            return 0;
+        case CHOICE:
+            return dice.faces[0] + dice.faces[1] + dice.faces[2] + dice.faces[3] + dice.faces[4];
+        case YACHT:
+            for (int i = 1; i <= 6; i++) {
+                if (counts[i] == 5) {
+                    return 50;
+                }
+            }
+            return 0;
+        default:
+            return 0;
     }
     return 0;
 }
