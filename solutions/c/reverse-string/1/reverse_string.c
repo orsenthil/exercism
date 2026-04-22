@@ -2,12 +2,19 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 char *reverse(const char *value) {
-    char *reversed = malloc(strlen(value) + 1);
-    int i, j;
-    for (i = strlen(value) - 1, j = 0; i >= 0; i--, j++) {
-        reversed[j] = value[i];
+    if (value == NULL) {
+        return NULL;
     }
-    reversed[j] = '\0';
-    return reversed;
+    size_t len = strlen(value);
+    char * buf =malloc(len + 1);
+    if (buf == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        buf[i] = value[len - 1 - i];
+    }
+    buf[len] = '\0';
+    return buf;
 }
