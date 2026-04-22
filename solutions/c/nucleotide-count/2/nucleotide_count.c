@@ -1,29 +1,43 @@
 #include "nucleotide_count.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 char *count(const char *dna_strand) {
-    char *ret = malloc(30);
-    int numbers[4] = {0};
+    int count_A = 0;
+    int count_C = 0;
+    int count_G = 0;
+    int count_T = 0;
 
-    for (; *dna_strand; dna_strand++)
-    {
-        if (*dna_strand == 'A')
-            numbers[0] += 1;
-        else if (*dna_strand == 'C')
-            numbers[1] += 1;
-        else if (*dna_strand == 'G')
-            numbers[2] += 1;
-        else if (*dna_strand == 'T')
-            numbers[3] += 1;
-        else {
-            strcpy(ret, "");
-            return ret;
-        }
+    size_t buf_size = 20; // "A:0 C:0 G:0 T:0" is 19 characters + null terminator
+    char *buf = malloc(buf_size);
+
+    if (buf == NULL) {
+        return NULL;
     }
 
-    sprintf(ret, "%c:%d %c:%d %c:%d %c:%d", 'A', numbers[0], 'C', numbers[1], 'G', numbers[2], 'T', numbers[3]);
-
-    return ret;
+    for (size_t i = 0; i < strlen(dna_strand); i++) {
+        if (dna_strand[i] != 'A' && dna_strand[i] != 'C' && dna_strand[i] != 'G' && dna_strand[i] != 'T') {
+            free(buf);
+            char *empty = malloc(1);
+            empty[0] = '\0';
+            return empty;
+        }
+        switch (dna_strand[i]) {
+            case 'A':
+                count_A++;
+                break;
+            case 'C':
+                count_C++;
+                break;
+            case 'G':
+                count_G++;
+                break;
+            case 'T':
+                count_T++;
+                break;
+        }
+    }
+    snprintf(buf, buf_size, "A:%d C:%d G:%d T:%d", count_A, count_C, count_G, count_T);
+    return buf;
 }
