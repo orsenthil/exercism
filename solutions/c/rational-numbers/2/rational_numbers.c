@@ -1,75 +1,89 @@
 #include "rational_numbers.h"
-#include <math.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <math.h>
 
-int _gcd_euclidean(int a, int b);
-
-rational_t add(rational_t r1, rational_t r2) {
-    rational_t  ret;
-
-    ret.numerator = r1.numerator * r2.denominator + r2.numerator * r1.denominator;
-    ret.denominator = r1.denominator * r2.denominator;
-
-    return reduce(ret);
+int gcd(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
 }
 
-rational_t subtract(rational_t r1, rational_t r2) {
-    rational_t ret;
-
-    ret.numerator = r1.numerator * r2.denominator - r2.numerator * r1.denominator;
-    ret.denominator = r1.denominator * r2.denominator;
-
-    return reduce(ret);
-}
-
-rational_t multiply(rational_t r1, rational_t r2) {
-    rational_t ret;
-
-    ret.numerator = r1.numerator * r2.numerator;
-    ret.denominator = r1.denominator * r2.denominator;
-
-    return reduce(ret);
-}
-
-rational_t divide(rational_t r1, rational_t r2) {
-    rational_t ret;
-
-    ret.numerator = r1.numerator * r2.denominator;
-    ret.denominator = r2.numerator * r1.denominator;
-
-    return reduce(ret);
-}
-
-rational_t absolute(rational_t r) {
-    rational_t ret = {abs(r.numerator), abs(r.denominator)};
-    return reduce(ret);
-}
-
-rational_t exp_rational(rational_t r, uint16_t n) {
-    rational_t ret = {pow(r.numerator, n), pow(r.denominator, n)};
-    return reduce(ret);
-}
-
-float exp_real(float x, rational_t r) {
-    return pow(pow(x, r.numerator), 1.0 / r.denominator);
-}
-
-int _gcd_euclidean(int a, int b) {
-    int larger = a >= b ? a : b;
-    int smaller = a <= b ? a : b;
-
-    return smaller == 0 ? larger : _gcd_euclidean(smaller, larger % smaller );
+int power(int base, int exponent) {
+    int result = 1;
+    for (int i = 0; i < exponent; i++) {
+        result *= base;
+    }
+    return result;
 }
 
 rational_t reduce(rational_t r) {
-    int gcd = _gcd_euclidean(abs(r.numerator), abs(r.denominator));
+    int gcd_value = gcd(r.numerator, r.denominator);
+    rational_t result;
+    result.numerator = r.numerator / gcd_value;
+    result.denominator = r.denominator / gcd_value;
+    if (result.denominator < 0 && result.numerator > 0) {
+        result.numerator = -result.numerator;
+        result.denominator = -result.denominator;
+    }    return result;
+    return result;
+}
 
-    rational_t ret = {r.numerator / gcd, r.denominator / gcd};
+rational_t add(rational_t a, rational_t b) {
+    rational_t result;
+    result.numerator = a.numerator * b.denominator + b.numerator * a.denominator;
+    result.denominator = a.denominator * b.denominator;
+    result = reduce(result);
+    return result;
+}
 
-    if (ret.denominator < 0) {
-        ret.numerator *= -1;
-        ret.denominator *= -1;
+rational_t subtract(rational_t a, rational_t b) {
+    rational_t result;
+    result.numerator = a.numerator * b.denominator - b.numerator * a.denominator;
+    result.denominator = a.denominator * b.denominator;
+    result = reduce(result);
+    return result;
+}
+
+rational_t multiply(rational_t a, rational_t b) {
+    rational_t result;
+    result.numerator = a.numerator * b.numerator;
+    result.denominator = a.denominator * b.denominator;
+    result = reduce(result);
+    return result;
+}
+
+rational_t divide(rational_t a, rational_t b) {
+    rational_t result;
+    result.numerator = a.numerator * b.denominator;
+    result.denominator = a.denominator * b.numerator;
+    result = reduce(result);
+    return result;
+}
+
+rational_t absolute(rational_t a) {
+    rational_t result;
+    result.numerator = abs(a.numerator);
+    result.denominator = abs(a.denominator);
+    result = reduce(result);
+    return result;
+}
+
+rational_t exp_rational(rational_t a, int exponent) {
+    rational_t result;
+    if (exponent < 0) {
+        int tmp = a.numerator;
+        a.numerator = a.denominator;
+        a.denominator = tmp;
+        exponent = -exponent;
     }
+    result.numerator = power(a.numerator, exponent);
+    result.denominator = power(a.denominator, exponent);
+    result = reduce(result);
+    return result;
+}
 
-    return ret;
+float exp_real(uint16_t base, rational_t exponent) {
+    return powf((float) base, (float) exponent.numerator / (float) exponent.denominator);
 }
