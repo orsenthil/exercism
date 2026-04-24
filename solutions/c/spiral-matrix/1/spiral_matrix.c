@@ -1,41 +1,50 @@
 #include "spiral_matrix.h"
-
 #include <stdlib.h>
-#include <string.h>
+#include <stddef.h>
 
-spiral_matrix_t* spiral_matrix_create(int size) {
-    spiral_matrix_t* sp = calloc(1, sizeof(spiral_matrix_t));
-    sp->size = size;
+spiral_matrix_t *spiral_matrix_create(int size) {
     if (size == 0) {
-        return sp;
+        spiral_matrix_t *spiral_matrix = malloc(sizeof(spiral_matrix_t));
+        spiral_matrix->size = 0;
+        spiral_matrix->matrix = NULL;
+        return spiral_matrix;
     }
-    sp->matrix = calloc(size, sizeof(int*));
+    spiral_matrix_t *spiral_matrix = malloc(sizeof(spiral_matrix_t));
+    spiral_matrix->size = size;
+    spiral_matrix->matrix = malloc(sizeof(int *) * size);
     for (int i = 0; i < size; i++) {
-        sp->matrix[i] = calloc(size, sizeof(int) * size);
-        memset(sp->matrix[i], 0, sizeof(int) * size);
+        spiral_matrix->matrix[i] = malloc(sizeof(int) * size);
     }
-
-    int x = 0, y = 0;
-    int dx = 0, dy = 1;
-    for (int i = 1; i <= size * size; i++) {
-        sp->matrix[x][y] = i;
-        int nx = x + dx;
-        int ny = y + dy;
-        if (nx < 0 || nx >= size || ny < 0 || ny >= size || sp->matrix[nx][ny] > 0) {
-            int tmp = dx;
-            dx = dy;
-            dy = -tmp;
+    int num = 1;
+    int top = 0, bottom = size - 1, left = 0, right = size - 1;
+    while (top <= bottom && left <= right) {
+        for (int i = left; i <= right; i++) {
+            spiral_matrix->matrix[top][i] = num++;
         }
-        x += dx;
-        y += dy;
+        top++;
+        for (int i = top; i <= bottom; i++) {
+            spiral_matrix->matrix[i][right] = num++;
+        }
+        right--;
+        for (int i = right; i >= left; i--) {
+            spiral_matrix->matrix[bottom][i] = num++;
+        }
+        bottom--;
+        for (int i = bottom; i >= top; i--) {
+            spiral_matrix->matrix[i][left] = num++;
+        }
+        left++;
     }
-    return sp;
+    return spiral_matrix;
 }
 
-void spiral_matrix_destroy(spiral_matrix_t *matrix) {
-    for (int i = 0; i < matrix->size; i++) {
-        free(matrix->matrix[i]);
+void spiral_matrix_destroy(spiral_matrix_t *spiral_matrix) {
+    if (spiral_matrix == NULL) {    
+        return;
     }
-    free(matrix->matrix);
-    free(matrix);
+    for (int i = 0; i < spiral_matrix->size; i++) {
+        free(spiral_matrix->matrix[i]);
+    }
+    free(spiral_matrix->matrix);
+    free(spiral_matrix);
 }
