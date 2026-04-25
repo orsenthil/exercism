@@ -23,4 +23,6 @@ struct candidates {
  */
 void find_anagrams(const char *subject, struct candidates *candidates);
 
+void build_freq(const char *word, int freq[26]);
+
 #endif
