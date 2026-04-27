@@ -1,82 +1,34 @@
 #include "diamond.h"
-
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
-#define LETTER_LENGTH 26
-
-static char letters[LETTER_LENGTH] = {
-        'A', 'B', 'C', 'D', 'E', 'F',
-        'G', 'H', 'I', 'J', 'K', 'L',
-        'M', 'N', 'O', 'P', 'Q', 'R',
-        'S', 'T', 'U', 'V', 'W', 'X',
-        'Y', 'Z'
-};
-
-static void populate_string(char** diamond, int i, char c, int length, int side, int middle);
-
-char **make_diamond(const char letter)
-{
-
-    if (letter < 'A' || letter > 'Z') {
-        return NULL;
-    }
-
-    int letter_index = 0, i;
-
-    while (letter != letters[letter_index++]);
-
-    int length = (2 * letter_index) - 1, side, middle;
-
-    char** diamond = calloc(length, sizeof(char*));
-
-    for(i = 0; i < letter_index; i++) {
-        side = letter_index - 1 -i;
-        middle = (2 * i) - 1;
-
-        populate_string(diamond, i, letters[i], length, side, middle);
-
-        if (i != length - i - 1) {
-            populate_string(diamond, length - i - 1, letters[i], length, side, middle);
+char **make_diamond(const char letter) {
+    int n = letter - 'A' + 1;
+    int width = 2 * n - 1;
+    int rows = 2 * n - 1;
+    char **diamond = malloc(rows * sizeof(char *));
+    for (int i = 0; i < n; i++) {
+        diamond[i] = malloc(width * sizeof(char));
+        for (int j = 0; j < width; j++) {
+            diamond[i][j] = ' ';
+        }
+        diamond[i][n -1 - i] = 'A' + i;
+        if (i > 0) {
+            diamond[i][n - 1+ i] = 'A' + i;
         }
     }
-
+    for (int i = 0; i < n - 1; i++) {
+        diamond[i][width] = '\0';
+        diamond[rows - 1 - i] = malloc(width + 1);
+        memcpy(diamond[rows - 1 - i], diamond[i], width + 1);
+    }
     return diamond;
 }
 
-void free_diamond(char** diamond)
-{
-    if (diamond == NULL) {
-        return;
+void free_diamond(char **diamond) {
+    int rows = strlen(diamond[0]);
+    for (int i = 0; i < rows; i++) {
+        free(diamond[i]);
     }
     free(diamond);
-}
-
-void populate_string(char** diamond, int i, char c, int length, int side, int middle)
-{
-    diamond[i] = calloc(length, sizeof(char));
-
-    int pos = 0;
-
-    memset(diamond[i] + pos, ' ', side);
-
-    pos += side;
-
-    sprintf(diamond[i] + pos, "%c", c);
-
-    pos += 1;
-
-    if (middle > 0)
-    {
-        memset(diamond[i] + pos, ' ', middle);
-        pos += middle;
-
-        sprintf(diamond[i] + pos, "%c", c);
-        pos += 1;
-    }
-
-    memset(diamond[i] + pos, ' ', side);
-
-    pos += side;
 }
