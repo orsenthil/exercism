@@ -8,5 +8,6 @@ typedef struct {
    unsigned int value;
 } item_t;
 
-unsigned int maximum_value(unsigned int maximum_weight, const item_t* items, size_t item_count);
+unsigned int maximum_value(unsigned int maximum_weight, item_t *items, size_t item_count);
+
 #endif
